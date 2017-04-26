@@ -30,6 +30,7 @@ import com.serphacker.serposcope.scraper.http.proxy.ProxyRotator;
 import com.serphacker.serposcope.task.AbstractTask;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +91,7 @@ public class GoogleTask extends AbstractTask {
     int httpTimeoutMS;
     boolean updateRun;
     boolean shuffle = true;
+    Run run;
     
     @Inject
     public GoogleTask(
@@ -104,6 +106,7 @@ public class GoogleTask extends AbstractTask {
         this.captchaSolverFactory = captchaSolverFactory;
         this.scrapClientFactory = scrapClientFactory;
         this.googleDB = googleDB;
+        this.run = run;
         this.updateRun = run.getId() == 0 ? false : true;
         
         httpUserAgent = ScrapClient.DEFAULT_USER_AGENT;
@@ -313,8 +316,12 @@ public class GoogleTask extends AbstractTask {
         List<GoogleSearch> searchList;
         if(updateRun){
             searchList = googleDB.search.listUnchecked(run.getId());
+        } else if(run.getGroup() != null) { 
+        	Collection<Integer> groups = new ArrayList<Integer>();
+        	groups.add(run.getGroup().getId());
+			searchList = googleDB.search.listByGroup(groups);
         } else {
-            searchList = googleDB.search.list();
+        	searchList = googleDB.search.list();
         }
         if(shuffle){
             Collections.shuffle(searchList);

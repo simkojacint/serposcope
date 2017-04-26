@@ -14,7 +14,6 @@ import com.querydsl.sql.dml.SQLDeleteClause;
 import com.querydsl.sql.dml.SQLInsertClause;
 import com.serphacker.serposcope.db.AbstractDB;
 import com.serphacker.serposcope.models.base.Config;
-import static com.serphacker.serposcope.models.base.Config.DEFAULT_PRUNE_RUNS;
 import com.serphacker.serposcope.querybuilder.QConfig;
 import java.sql.Connection;
 
@@ -47,21 +46,21 @@ public class ConfigDB extends AbstractDB {
     QConfig t_cfg = QConfig.config;
     
     public void update(String name, String value){
-        boolean updated=false;
+//        boolean updated=false;
         try(Connection con = ds.getConnection()){
             
             if(value == null){
-                updated = new SQLDeleteClause(con, dbTplConf, t_cfg)
+                /*updated = */ new SQLDeleteClause(con, dbTplConf, t_cfg)
                     .where(t_cfg.name.eq(name))
-                    .execute() == 1;
+                    .execute()/* == 1*/;
             } else {
-                updated = new SQLInsertClause(con, dbTplConf, t_cfg)
+                /*updated = */ new SQLInsertClause(con, dbTplConf, t_cfg)
                     .set(t_cfg.name, name)
                     .set(t_cfg.value, value)
                     .addFlag(Position.END, 
                         " on duplicate key update value = " + dbTplConf.asLiteral(value)
                     )
-                    .execute() == 1;
+                    .execute()/* == 1*/;
             }
                 
         } catch(Exception ex){

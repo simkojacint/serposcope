@@ -16,6 +16,7 @@ import ninja.Results;
 import ninja.Router;
 import ninja.i18n.Messages;
 import ninja.params.Param;
+import ninja.params.PathParam;
 import ninja.session.FlashScope;
 
 import com.google.common.base.Optional;
@@ -56,6 +57,7 @@ public class SyncController extends BaseController {
     
     public Result startTask(
         Context context,
+        @PathParam("groupId") Integer groupId,
         @Param("module") Integer moduleId,
         @Param("update") Boolean update
     ) {   
@@ -65,8 +67,12 @@ public class SyncController extends BaseController {
             run = baseDB.run.findLast(GOOGLE, null, null);
         }
         
+        Group group = null;
+        if(groupId != null)
+        	group = baseDB.group.find(groupId);
+        
         if(run == null){
-            run = new Run(Run.Mode.MANUAL, Group.Module.GOOGLE, LocalDateTime.now());
+            run = new Run(Run.Mode.MANUAL, Group.Module.GOOGLE, LocalDateTime.now(), group);
         } else {
             run.setStatus(Run.Status.RUNNING);
             run.setStarted(LocalDateTime.now());
