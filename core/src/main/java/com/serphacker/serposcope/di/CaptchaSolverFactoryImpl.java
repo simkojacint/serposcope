@@ -12,12 +12,10 @@ import com.serphacker.serposcope.scraper.captcha.solver.AntiCaptchaSolver;
 import com.serphacker.serposcope.scraper.captcha.solver.CaptchaSolver;
 import com.serphacker.serposcope.scraper.captcha.solver.DeathByCaptchaSolver;
 import com.serphacker.serposcope.scraper.captcha.solver.DecaptcherSolver;
-import com.serphacker.serposcope.scraper.captcha.solver.RandomCaptchaSolver;
-import com.serphacker.serposcope.scraper.captcha.solver.SwingUICaptchaSolver;
+import com.serphacker.serposcope.scraper.captcha.solver.FailoverCaptchaSolver;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +58,7 @@ public class CaptchaSolverFactoryImpl implements CaptchaSolverFactory {
         }
         
         Collections.shuffle(solvers);
-        return new RandomCaptchaSolver(solvers);
+        return new FailoverCaptchaSolver(solvers);
     }
     
     protected boolean init(CaptchaSolver solver){

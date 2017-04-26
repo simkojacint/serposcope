@@ -96,7 +96,7 @@ public class RandomCaptchaSolverTest {
     @Test
     public void testSomeMethod() {
         
-        RandomCaptchaSolver solver = new RandomCaptchaSolver(Arrays.asList(
+        FailoverCaptchaSolver solver = new FailoverCaptchaSolver(Arrays.asList(
             new DummyCaptchaSolver(1, false),
             new DummyCaptchaSolver(2, false),
             new DummyCaptchaSolver(3, true)

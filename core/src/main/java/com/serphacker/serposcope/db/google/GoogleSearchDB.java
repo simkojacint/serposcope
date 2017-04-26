@@ -301,7 +301,7 @@ public class GoogleSearchDB extends AbstractDB {
         }
         
         return searches;
-    }    
+    }
     
     public Map<Integer, GoogleSearch> mapBySearchId(Collection<Integer> searchId){
         Map<Integer, GoogleSearch> searches = new HashMap<>();

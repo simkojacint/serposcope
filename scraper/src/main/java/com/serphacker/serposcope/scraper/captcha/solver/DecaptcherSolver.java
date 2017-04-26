@@ -222,7 +222,7 @@ public class DecaptcherSolver implements CaptchaSolver {
                     break;
                 }
                 
-                if(++retry > maxRetryOnOverload){
+                if(maxRetryOnOverload > 0 && ++retry > maxRetryOnOverload){
                     break;
                 }
                 
