@@ -282,7 +282,7 @@ public class GoogleScraper {
             return 0;
         }
         
-        Element resultstStatsDiv = lastSerpHtml.getElementById("resultStats");
+        Element resultstStatsDiv = lastSerpHtml.getElementById("result-stats");
         if(resultstStatsDiv == null){
             return 0;
         }
