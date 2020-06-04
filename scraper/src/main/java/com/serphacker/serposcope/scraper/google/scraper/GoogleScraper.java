@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GoogleScraper {
     
-    public final static int DEFAULT_MAX_RETRY = 3;
+    public final static int DEFAULT_MAX_RETRY = 30;
     
     final static BasicClientCookie NCR_COOKIE = new BasicClientCookie("PREF", "ID=1111111111111111:CR=2");
     static {
