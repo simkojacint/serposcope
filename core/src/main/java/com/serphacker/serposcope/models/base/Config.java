@@ -31,6 +31,7 @@ public class Config {
     String twoCaptchaKey;
     
     String imageTyperzKey;
+    String taskNotificationUrl;
     
     public final static String DEFAULT_DISPLAY_HOME = "summary";
     public final static List<String> VALID_DISPLAY_HOME = Arrays.asList("summary","table");
@@ -102,6 +103,15 @@ public class Config {
         this.imageTyperzKey = imageTyperzKey;
     }
         
+    
+    public String getTaskNotificationUrl() {
+    	return taskNotificationUrl;
+    }
+    
+    public void setTaskNotificationUrl(String taskNotificationUrl) {
+    	this.taskNotificationUrl = taskNotificationUrl;
+    }
+    
     public LocalTime getCronTime() {
         return cronTime;
     }

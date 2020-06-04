@@ -156,8 +156,8 @@ public class DeathByCaptchaSolver implements CaptchaSolver {
                 if (!isRetryableStatus(httpStatus)) {
                     break;
                 }
-
-                if (++retry > maxRetryOnOverload) {
+                
+                if(maxRetryOnOverload > 0 && ++retry > maxRetryOnOverload){
                     break;
                 }
 

@@ -19,7 +19,17 @@
 * Fix TLD/country localization issue. TLD is replace by country. On upgrade, TLD are automatically converted to associated country unless it is a generic TLD. You may want to reconfigure your default country for new keyword in admin > settings > google > country.
 * Scraper module sources published to maven (to be moved in another repo in near futur)
 
-## 2.7.1 - 2017-03-24
+## 2.7.1 - 2017-03-21
+
+* Hungarian translation thanks to [@chpdesign](https://github.com/chpdesign)
+* Captcha custom debug error message (for more realable debuging)
+* Anticaptcha higher waiting for captcha decode (high as 500 ms)
+* Search notification callback url in settings
+* Credits tab in the admin
+* googleResults store in db aka hits migrated db with version 6->7
+
+## 2.7.0 - 2017-03-16
+
 
 * IMPORTANT Fix new recaptcha v2 form issue [#155](https://github.com/serphacker/serposcope/issues/155)
 * Big improvements on captcha handling and rate limiting

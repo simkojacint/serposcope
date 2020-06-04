@@ -12,55 +12,79 @@ import com.serphacker.serposcope.scraper.captcha.Captcha;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class RandomCaptchaSolver implements CaptchaSolver {
+public class FailoverCaptchaSolver implements CaptchaSolver {
     
-    private static final Logger LOG = LoggerFactory.getLogger(RandomCaptchaSolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FailoverCaptchaSolver.class);
     
+    volatile CaptchaSolver currentSolver;
+    
+    List<CaptchaSolver> originalList;
     LinkedList<CaptchaSolver> solvers;
     
     AtomicInteger captchaCount=new AtomicInteger();
 
-    public RandomCaptchaSolver(Collection<CaptchaSolver> solvers) {
+    public FailoverCaptchaSolver(Collection<CaptchaSolver> solvers) {
+        this.originalList = new ArrayList<>(solvers);
         this.solvers = new LinkedList<>(solvers);
+        this.currentSolver = this.solvers.poll();
     }
 
     @Override
     public boolean solve(Captcha captcha) {
         captchaCount.incrementAndGet();
-        
-        ArrayList<CaptchaSolver> localSolvers = new ArrayList<>(solvers);
-        Collections.shuffle(localSolvers, ThreadLocalRandom.current());
-        
-        for (CaptchaSolver solver : localSolvers) {
-            captcha.setStatus(Captcha.Status.CREATED);
-            captcha.setError(Captcha.Error.SUCCESS);
-            LOG.info("trying {}", solver.getFriendlyName());
+        do {
+            CaptchaSolver solver = currentSolver();
+            if(solver == null){
+                LOG.info("all captcha solver failed");
+                captcha.setLastSolver(this);
+                if(captcha.getError().equals(Captcha.Error.SUCCESS))
+                	captcha.setError(Captcha.Error.SERVICE_OVERLOADED);
+                return false;
+            }
+            
             if(solver.solve(captcha)){
                 return true;
             }
-            LOG.info("{} failed with {}", solver.getFriendlyName(), captcha.getError());
-        }
-        
-        LOG.info("all captcha solver failed");
-        return false;
+            
+            invalidSolver(solver, captcha);
+        } while(true);
     }
     
+    protected synchronized CaptchaSolver currentSolver() {
+        return currentSolver;
+    }
+    
+    protected synchronized void invalidSolver(CaptchaSolver solver, Captcha captcha) {
+        if(solver == currentSolver){
+            currentSolver = solvers.poll();
+            LOG.info("{} failed with {}, {}, replacing by {}", 
+                solver.getFriendlyName(), captcha.getError(), captcha.getErrorMsg(),
+                currentSolver == null ? "nothing (no more captcha solver)" : currentSolver.getFriendlyName()
+            );
+        }
+    }
+
     @Override
     public boolean init() {
-        if(solvers.isEmpty()){
+        if(currentSolver == null){
             return false;
         }
         
-        LOG.info("solvers : [{}]", solvers.stream().map(CaptchaSolver::getFriendlyName).collect(Collectors.joining(",")));
+        String failovers="none";
+        if(!solvers.isEmpty()){
+            failovers=solvers.stream().map(CaptchaSolver::getFriendlyName).collect(Collectors.joining(","));
+        }
+        
+        LOG.info("default solver : {} | failover solvers : [{}]", currentSolver.getFriendlyName(), failovers);
         return true;
     }    
 
@@ -91,7 +115,7 @@ public class RandomCaptchaSolver implements CaptchaSolver {
 
     @Override
     public void close() throws IOException {
-        for (CaptchaSolver solver : solvers) {
+        for (CaptchaSolver solver : originalList) {
             try {
                 solver.close();
             } catch(IOException ex){

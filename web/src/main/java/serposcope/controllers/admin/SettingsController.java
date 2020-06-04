@@ -91,7 +91,8 @@ public class SettingsController extends BaseController {
         @Param("anticaptchaApiKey") String anticaptchaApiKey,
         @Param("twoCaptchaKey") String twoCaptchaKey,
         @Param("imageTyperzKey") String imageTyperzKey,
-        @Param("pruneRuns") Integer pruneRuns
+        @Param("pruneRuns") Integer pruneRuns,
+        @Param("taskNotificationUrl") String taskNotificationUrl
     ){
         FlashScope flash = context.getFlashScope();
         
@@ -134,6 +135,10 @@ public class SettingsController extends BaseController {
         
         if(!Validator.isEmpty(imageTyperzKey)){
             config.setImageTyperzKey(imageTyperzKey);
+        }
+        
+        if(!Validator.isEmpty(taskNotificationUrl)){
+        	config.setTaskNotificationUrl(taskNotificationUrl);
         }
         
         if(pruneRuns == null || pruneRuns == 0){

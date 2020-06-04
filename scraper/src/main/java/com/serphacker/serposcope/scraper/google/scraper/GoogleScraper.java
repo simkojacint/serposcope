@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.http.HttpHost;
@@ -541,7 +540,7 @@ public class GoogleScraper {
         CaptchaRecaptcha captcha = new CaptchaRecaptcha(siteKey, captchaRedirect);
         boolean solved = solver.solve(captcha);
         if(!solved || !Captcha.Status.SOLVED.equals(captcha.getStatus())){
-            LOG.error("solver can't resolve captcha error = {}", captcha.getError());
+            LOG.error("solver can't resolve captcha (overload ?) error = {}", captcha.getError());
             if(Captcha.Error.SERVICE_OVERLOADED.equals(captcha.getError())){
                 LOG.warn("server is overloaded, increase maximum BID on {}", captcha.getLastSolver().getFriendlyName());
             }
@@ -646,7 +645,7 @@ public class GoogleScraper {
         CaptchaImage captcha = new CaptchaImage(new byte[][]{http.getContent()});
         boolean solved = solver.solve(captcha);
         if(!solved || !Captcha.Status.SOLVED.equals(captcha.getStatus())){
-            LOG.error("solver can't resolve captcha (overload ?) error = {}", captcha.getError());
+            LOG.error("solver can't resolve captcha (overload ?) error = {}, {}", captcha.getError(), captcha.getErrorMsg());
             return Status.ERROR_CAPTCHA_INCORRECT;
         }
         LOG.debug("got captcha response {} in {} seconds from {}", captcha.getResponse(), captcha.getSolveDuration()/1000l, 

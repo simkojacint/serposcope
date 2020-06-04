@@ -12,11 +12,9 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.serphacker.serposcope.scraper.captcha.Captcha;
-import static com.serphacker.serposcope.scraper.captcha.Captcha.Error.EXCEPTION;
 import com.serphacker.serposcope.scraper.captcha.CaptchaImage;
 import com.serphacker.serposcope.scraper.captcha.CaptchaRecaptcha;
 import com.serphacker.serposcope.scraper.http.ScrapClient;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +34,8 @@ public class AntiCaptchaSolver implements CaptchaSolver {
         .addOptions(Option.SUPPRESS_EXCEPTIONS);
 
     public final static long POLLING_PAUSE_MS = 2500l;
-    public final static long DEFAULT_TIMEOUT_MS = 180000l;
+
+    public final static long DEFAULT_TIMEOUT_MS = 500000l;
 
     private String apiUrl = "http://anti-captcha.com/";
     private String apiUrlv2 = "https://api.anti-captcha.com/";
@@ -267,7 +266,7 @@ public class AntiCaptchaSolver implements CaptchaSolver {
 
         } catch (IOException ex) {
             LOG.error("io exception", ex);
-            captcha.setError(EXCEPTION);
+            captcha.setError(Captcha.Error.EXCEPTION);
         } finally {
             captcha.setSolveDuration(System.currentTimeMillis() - started);
         }

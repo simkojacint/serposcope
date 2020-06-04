@@ -11,10 +11,6 @@ import com.serphacker.serposcope.models.base.Group.Module;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 
@@ -40,17 +36,23 @@ public class Run {
     LocalDate day;
     LocalDateTime started;
     LocalDateTime finished;
+    Group group;
     Status status;
     int progress;
     int captchas;
     int errors;
     
     public Run(Mode mode, Module module, LocalDateTime started) {
+    	this(mode, module, started, null);
+    }
+    
+    public Run(Mode mode, Module module, LocalDateTime started, Group group) {
         this.mode = mode;
         this.module = module;
         this.day = started.toLocalDate();
         this.started = started;
         this.status = Status.RUNNING;
+        this.group = group;
     }
 
     public Run() {
@@ -130,6 +132,14 @@ public class Run {
 
     public void setErrors(int errors) {
         this.errors = errors;
+    }
+    
+    public void setGroup(Group group) {
+    	this.group = group;
+    }
+    
+    public Group getGroup() {
+    	return this.group;
     }
     
     protected long getRemainingTimeMs(LocalDateTime now){
