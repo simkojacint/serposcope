@@ -16,6 +16,7 @@ import com.serphacker.serposcope.scraper.captcha.CaptchaImage;
 import com.serphacker.serposcope.scraper.captcha.CaptchaRecaptcha;
 import com.serphacker.serposcope.scraper.http.ScrapClient;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -118,7 +119,7 @@ public class AntiCaptchaSolver implements CaptchaSolver {
 
         if (captcha instanceof CaptchaImage) {
             taskMap.put("type", "ImageToTextTask");
-            taskMap.put("body", Base64.encode(((CaptchaImage) captcha).getImage()));
+            taskMap.put("body", Base64.getUrlEncoder().encode(((CaptchaImage) captcha).getImage()));
             taskMap.put("phrase", false);
             taskMap.put("case", false);
             taskMap.put("numeric", 0);

@@ -28,6 +28,7 @@ public class QGoogleSearch
   public final ForeignKey<QGoogleRank> _constraint6e22267 = createInvForeignKey(this.id, "google_search_id");
   public final ForeignKey<QGoogleSerp> _constraint6e = createInvForeignKey(this.id, "google_search_id");
   public final ForeignKey<QGoogleRankBest> _constraintB727 = createInvForeignKey(this.id, "google_search_id");
+  public StringPath country = createString("country");;
   
   public QGoogleSearch(String variable)
   {

@@ -175,7 +175,7 @@ public class GoogleScraperDebug extends DeepIntegrationTest {
                 scraper.prepareHttpClient(search);
                 String url = scraper.buildRequestUrl(search, 0);
 
-                assertEquals(OK, scraper.downloadSerp(url, null, search, GoogleScraper.MAX_RETRY));
+                assertEquals(OK, scraper.downloadSerp(url, null, search, GoogleScraper.DEFAULT_MAX_RETRY));
                 Files.write(
                     new File(System.getProperty("java.io.tmpdir") + "/serps/" + keyword + "-"
                         + search.getTld() + "-"
@@ -227,7 +227,7 @@ public class GoogleScraperDebug extends DeepIntegrationTest {
             scraper.prepareHttpClient(search);
             String url = scraper.buildRequestUrl(search, 1);
 
-            assertEquals(OK, scraper.downloadSerp(url, null, search, GoogleScraper.MAX_RETRY));
+            assertEquals(OK, scraper.downloadSerp(url, null, search, GoogleScraper.DEFAULT_MAX_RETRY));
             Files.write(new File(System.getProperty("java.io.tmpdir") + "/serps/last-page." + device.toString().toLowerCase()).toPath(), scraper.getHttp().getContent());
             Thread.sleep(1000l);
         }

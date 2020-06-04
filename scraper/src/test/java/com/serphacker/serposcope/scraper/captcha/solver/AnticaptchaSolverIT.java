@@ -26,9 +26,9 @@ import static org.junit.Assert.assertTrue;
  *
  * @author admin
  */
-public class AntiCaptchaSolverIT extends DeepIntegrationTest {
+public class AnticaptchaSolverIT extends DeepIntegrationTest {
     
-    public AntiCaptchaSolverIT() {
+    public AnticaptchaSolverIT() {
     }
     
     String apiKey;

@@ -28,6 +28,7 @@ public class GoogleScrapSearch {
     GoogleDevice device = GoogleDevice.DESKTOP;
     String local;
     String customParameters;
+    String tld = "com";
 
     public int getResultPerPage() {
         return resultPerPage;
@@ -168,5 +169,15 @@ public class GoogleScrapSearch {
         }
         return true;
     }
+    
+	public void setTld(String tld)
+	{
+		this.tld = tld;
+	}
+
+	public String getTld()
+	{
+		return tld;
+	}
     
 }

@@ -139,9 +139,6 @@ public class MigrationDB extends AbstractDB {
                         case 6:
                         	upgradeFromV6(stmt);
                             break;
-                        case 6:
-                            upgradeFromV6(stmt);
-                            break;
                     }
                 }catch(Exception ex){
                     con.rollback();
