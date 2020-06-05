@@ -3,7 +3,9 @@ package serposcope.controllers.admin;
 import static com.serphacker.serposcope.models.base.Group.Module.GOOGLE;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -120,6 +122,61 @@ public class SyncController extends BaseController {
 	            }
             
             }
+            StringBuilder builder = new StringBuilder("{");
+            builder.append("\"status\":\""+ret+"\"");
+            builder.append("}");
+
+            return Results.json().renderRaw(builder.toString());
+        }
+    
+    public Result startKeywordsMultiple(
+            Context context,
+            @PathParam("keywordId") String keywords
+        ) {   
+            String ret = "ERROR";
+            
+            String[] kws = keywords.split(",");
+            
+            Set<Integer> skw = new HashSet<>();
+            
+            for(String kw:kws)
+            {
+            	try
+            	{
+            		Integer id = Integer.parseInt(kw);
+            		if(null != googleDB.search.find(id))
+            		{
+            			skw.add(id);
+            		}
+            	}
+            	catch(Exception e)
+            	{}
+            }
+            
+            if(skw.isEmpty())
+            {
+            	ret = "NO_VALID_KEYWORD_SPECIFIED";
+            }
+            else
+            {
+            	int[] rids = new int[skw.size()];
+            	int ep = 0;
+            	for(Integer i:skw)
+            	{
+            		rids[ep++] = i;
+            	}
+            	
+            	Run run = new Run(Run.Mode.MANUAL, Group.Module.GOOGLE, LocalDateTime.now(), null, rids);
+                run.setStatus(Run.Status.RUNNING);
+                run.setStarted(LocalDateTime.now());
+	            
+	            ret = "START";
+	            
+	            if (!taskManager.startGoogleTask(run)) {
+	                ret = "RUNNING";
+	            }
+            }
+            
             StringBuilder builder = new StringBuilder("{");
             builder.append("\"status\":\""+ret+"\"");
             builder.append("}");

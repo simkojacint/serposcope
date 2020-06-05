@@ -83,6 +83,9 @@ public class Routes implements ApplicationRoutes {
         router.GET().route("/tasks/start").with(SyncController.class, "startTask");
         router.GET().route("/tasks/start/{groupId: [0-9]+}").with(SyncController.class, "startTask");
         router.GET().route("/tasks/start_single/{keywordId: [0-9]+}").with(SyncController.class, "startSingle");
+        
+        router.GET().route("/tasks/start_kw_multi/{keywordId: .*}").with(SyncController.class, "startKeywordsMultiple");
+        
         router.GET().route("/tasks/stop").with(SyncController.class, "abortTask");
         //router.GET().route("/tasks/stop/{groupId: [0-9]+}").with(SyncController.class, "startTask");
         router.GET().route("/test-captcha").with(SyncController.class, "testCaptcha");
