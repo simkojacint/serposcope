@@ -314,7 +314,20 @@ public class GoogleTask extends AbstractTask {
     
     protected void initializeSearches() {
         List<GoogleSearch> searchList;
-        if(updateRun){
+        
+        if(null != run.getRequestedSearches() && 0 != run.getRequestedSearches().length)
+        {
+        	searchList = new ArrayList<GoogleSearch>();
+        	for(int i:run.getRequestedSearches())
+        	{
+        		GoogleSearch s = googleDB.search.find(i);
+        		if(null != s)
+        		{
+        			searchList.add(s);
+        		}
+        	}
+        }
+        else if(updateRun){
             searchList = googleDB.search.listUnchecked(run.getId());
         } else if(run.getGroup() != null) { 
         	Collection<Integer> groups = new ArrayList<Integer>();

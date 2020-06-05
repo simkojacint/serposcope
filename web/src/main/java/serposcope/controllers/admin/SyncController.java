@@ -26,6 +26,7 @@ import com.serphacker.serposcope.db.base.BaseDB;
 import com.serphacker.serposcope.db.google.GoogleDB;
 import com.serphacker.serposcope.models.base.Group;
 import com.serphacker.serposcope.models.base.Run;
+import com.serphacker.serposcope.models.google.GoogleSearch;
 import com.serphacker.serposcope.scraper.captcha.solver.AntiCaptchaSolver;
 import com.serphacker.serposcope.scraper.captcha.solver.CaptchaSolver;
 import com.serphacker.serposcope.scraper.captcha.solver.DeathByCaptchaSolver;
@@ -72,7 +73,7 @@ public class SyncController extends BaseController {
         	group = baseDB.group.find(groupId);
         
         if(run == null){
-            run = new Run(Run.Mode.MANUAL, Group.Module.GOOGLE, LocalDateTime.now(), group);
+            run = new Run(Run.Mode.MANUAL, Group.Module.GOOGLE, LocalDateTime.now(), group, null);
         } else {
             run.setStatus(Run.Status.RUNNING);
             run.setStarted(LocalDateTime.now());
@@ -89,6 +90,42 @@ public class SyncController extends BaseController {
 
         return Results.json().renderRaw(builder.toString());
     }
+    
+    public Result startSingle(
+            Context context,
+            @PathParam("keywordId") Integer keywordId,
+            @Param("module") Integer moduleId
+        ) {   
+            String ret = "ERROR";
+            
+            if(null != keywordId)
+            {
+	            GoogleSearch s = googleDB.search.find(keywordId);
+	            
+	            if(null == s)
+	            {
+	            	ret = "KEYWORD_DOESNT_EXISTS";
+	            }
+	            else
+	            {
+	            	Run run = new Run(Run.Mode.MANUAL, Group.Module.GOOGLE, LocalDateTime.now(), null, new int[] {keywordId});
+	                run.setStatus(Run.Status.RUNNING);
+	                run.setStarted(LocalDateTime.now());
+		            
+		            ret = "START";
+		            
+		            if (!taskManager.startGoogleTask(run)) {
+		                ret = "RUNNING";
+		            }
+	            }
+            
+            }
+            StringBuilder builder = new StringBuilder("{");
+            builder.append("\"status\":\""+ret+"\"");
+            builder.append("}");
+
+            return Results.json().renderRaw(builder.toString());
+        }
     
     public Result abortTask(
         Context context,

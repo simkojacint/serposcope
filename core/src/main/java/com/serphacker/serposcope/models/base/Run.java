@@ -41,18 +41,20 @@ public class Run {
     int progress;
     int captchas;
     int errors;
+    int[] searches;
     
     public Run(Mode mode, Module module, LocalDateTime started) {
-    	this(mode, module, started, null);
+    	this(mode, module, started, null, null);
     }
     
-    public Run(Mode mode, Module module, LocalDateTime started, Group group) {
+    public Run(Mode mode, Module module, LocalDateTime started, Group group, int[] searches) {
         this.mode = mode;
         this.module = module;
         this.day = started.toLocalDate();
         this.started = started;
         this.status = Status.RUNNING;
         this.group = group;
+        this.searches = searches;
     }
 
     public Run() {
@@ -181,5 +183,10 @@ public class Run {
     public boolean isRunning(){
         return Status.RUNNING.equals(status) || Status.ABORTING.equals(status);
     }
+
+	public int[] getRequestedSearches()
+	{
+		return searches;
+	}
     
 }
