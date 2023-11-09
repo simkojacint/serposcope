@@ -470,16 +470,20 @@ public class GoogleScraper {
         if(content == null){
             return Status.ERROR_NETWORK;
         }
-        
+
+        LOG.debug("Original content");
+        LOG.debug(content);
+
         Document doc = Jsoup.parse(content, redirect);
         
         Elements noscript = doc.getElementsByTag("noscript");
         if(!noscript.isEmpty()){
             LOG.debug("noscript form detected, trying with captcha image");
-            return noscriptCaptchaForm(doc, redirect);
-//            if(Status.OK.equals(ret)){
-//                return ret;
-//            }
+            Status ret = noscriptCaptchaForm(doc, redirect);
+            LOG.debug(Status.OK + "");
+            if(Status.OK.equals(ret)){
+                return ret;
+            }
         }
         
         LOG.debug("trying with captcha recaptcha");
@@ -488,6 +492,9 @@ public class GoogleScraper {
     
     protected Status recaptchaForm(Document doc, String captchaRedirect){
         
+        LOG.debug("content from the Document object");
+        LOG.debug(doc.body().toString());
+
         Elements siteKeys = doc.getElementsByAttribute("data-sitekey");
         if(siteKeys.isEmpty()){
             debugDump("missing-data-sitekey-1", doc.toString());
@@ -552,6 +559,16 @@ public class GoogleScraper {
         map.put("g-recaptcha-response", captcha.getResponse());
         
         int postCaptchaStatus = http.post(formAction, map, ScrapClient.PostType.URL_ENCODED, "utf-8", captchaRedirect);
+        
+        LOG.debug("formAction");
+        LOG.debug(formAction);
+        
+        LOG.debug("captchaRedirect");
+        LOG.debug(captchaRedirect);
+
+        LOG.debug("postCaptchaStatus");
+        LOG.debug(postCaptchaStatus + "");
+    
         if(postCaptchaStatus == 302){
             String redirectOnSuccess = http.getResponseHeader("location");
             if(redirectOnSuccess.startsWith("http://")){
@@ -595,7 +612,13 @@ public class GoogleScraper {
         String imageSrc = null;
         Elements elements = captchaDocument.getElementsByTag("img");
         for (Element element : elements) {
+
+            LOG.debug("hello");
+            LOG.debug("element src");
+
             String src = element.attr("abs:src");
+            LOG.debug(src);
+
             if(src != null && src.contains("/sorry/image")){
                 imageSrc = src;
             }
