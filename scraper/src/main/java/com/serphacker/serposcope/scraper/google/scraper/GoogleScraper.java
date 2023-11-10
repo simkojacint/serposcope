@@ -450,10 +450,16 @@ public class GoogleScraper {
         
         if(status == 302){
             redirect = http.getResponseHeader("location");
+            LOG.debug("redirect");
+            LOG.debug(redirect.toString());
         }
         
         if(redirect == null || !redirect.contains("?continue=")){
             return Status.ERROR_NETWORK;
+        }
+
+        if(redirect.contains("https://consent.google.com/ml?continue=")) {
+            redirect = redirect.replace("https://consent.google.com/ml?continue=", "");
         }
         
         LOG.debug("captcha form detected via {}", http.getProxy() == null ? new DirectNoProxy() : http.getProxy());
@@ -480,8 +486,7 @@ public class GoogleScraper {
         if(!noscript.isEmpty()){
             LOG.debug("noscript form detected, trying with captcha image");
             Status ret = noscriptCaptchaForm(doc, redirect);
-            LOG.debug(Status.OK + "");
-            if(Status.OK.equals(ret)){
+            if(ret.equals(Status.OK)) {
                 return ret;
             }
         }
@@ -568,6 +573,9 @@ public class GoogleScraper {
 
         LOG.debug("postCaptchaStatus");
         LOG.debug(postCaptchaStatus + "");
+
+        LOG.debug("redirect");
+        LOG.debug(http.getResponseHeader("location"));
     
         if(postCaptchaStatus == 302){
             String redirectOnSuccess = http.getResponseHeader("location");
